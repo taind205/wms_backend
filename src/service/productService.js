@@ -216,8 +216,9 @@ const updateTag = async (update_info) => {
     return true;
 }
 
-const createImport = async (info) => {
+const createImport = async (info, createdBy) => {
     info.StatusId=1;
+    info.createdBy=createdBy;
     console.log("create import:", info, info.list);
 
     try{
@@ -293,8 +294,9 @@ const loadProductBatchesbyProductId = async (query) => {
     return list;
 }
 
-const createExport = async (info) => {
+const createExport = async (info, createdBy) => {
     info.StatusId=1;
+    info.createdBy=createdBy;
     console.log("create export:", info, info.list);
 
     let new_export_ids = {};

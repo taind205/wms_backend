@@ -109,7 +109,7 @@ const createImport = async (req, res) => {
         {res.send({msg:"Cần chọn một kho.", err:22}); return;}
     if(!req.body.list || !req.body.list.length)
         {res.send({msg:"Cần ít nhất một hàng hóa trong phiếu nhập.", err:23}); return;}
-    const isComplete = await productService.createImport(req.body);
+    const isComplete = await productService.createImport(req.body, res.locals.user);
     isComplete? res.send({msg:"Tạo phiếu nhập thành công", err:0})
     : res.send({msg:"Tạo phiếu nhập thất bại", err:2})
 }
@@ -135,7 +135,7 @@ const createExport = async (req, res) => {
     if(!req.body.list || !req.body.list.length)
         {res.send({msg:"Cần ít nhất một hàng hóa trong phiếu xuất.", err:23}); return;}
 
-    const isComplete = await productService.createExport(req.body);
+    const isComplete = await productService.createExport(req.body, res.locals.user);
     isComplete? res.send({msg:"Tạo phiếu xuất thành công", err:0})
     : res.send({msg:"Tạo phiếu xuất thất bại", err:2})
 }

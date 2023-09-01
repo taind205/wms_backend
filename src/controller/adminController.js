@@ -35,14 +35,14 @@ const loadListAccount = async (req, res) => {
 }
 
 const createAccount = async (req, res) => {
-    const isCreateComplete = await userService.createAccount(req.body.account_info);
+    const isCreateComplete = await userService.createAccount(req.body);
     isCreateComplete ?
     res.send({msg:"Tạo tài khoản thành công"}) : 
     res.send({msg:"Tạo tài khoản thất bại"})
 }
 
 const updateAccount = async (req, res) => {
-    const isComplete = await userService.updateAccount(req.body.update_info);
+    const isComplete = await userService.updateAccount(req.body);
     isComplete ?
     res.status(200).send({msg:"Cập nhật thành công", err:0}) : 
     res.status(200).send({msg:"Cập nhật thất bại", err:1})

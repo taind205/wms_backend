@@ -3,7 +3,7 @@ import adminController from "../controller/adminController"
 import businessController from "../controller/businessController"
 import warehouseKeeperController from "../controller/warehouseKeeperController"
 import multer from "multer";
-import { admin_Auth, warehouseKeeper_Auth, business_Auth } from "../middleware/auth";
+import { admin_Auth, warehouseKeeper_Auth, business_Auth, get_Role } from "../middleware/auth";
 //const upload = multer({ dest: 'C:\\IT\\Project\\WMS\\DB\\Img\\Warehouse\\' })
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -59,6 +59,7 @@ const initWebRoutes = (app) => {
     router.get("/userinfo/get", adminController.getUserInfo);
     router.post("/userinfo/update", adminController.updateUserInfo);
     router.post("/login/", adminController.handleLogin);
+    router.get("/role/get", get_Role);
 
     router.get("/admin/account/load/:n", admin_Auth, adminController.loadListAccount);
     router.post("/admin/account/create", admin_Auth, adminController.createAccount);
