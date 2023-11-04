@@ -1,25 +1,27 @@
 import productService from "../service/productService";
 import warehouseService from "../service/warehouseService"
+import { FILE_STORAGE_PATH } from "../routes/route";
+import { ERRORS, MSG } from "../msg";
 
 const addStorageLocation = async (req, res) => {
     // req.file is the name of your file in the form above, here 'uploaded_file'
     // req.body will hold the text fields, if there were any 
     // req.file.filename=req.body.name;
     console.log(req.file, req.body)
-    let img_path='';
+    let img_filename='';
     if(!req.file) {
-        if(req.body.useDefaultImage) img_path='C:\\IT\\DB\\WMS\\Image\\StorageLocation\\default.png';
-        else {res.send({msg:"File không hợp lệ.", err:21}); return;} }
-    else img_path=req.file.path;
+        if(req.body.useDefaultImage) img_filename='default.png';
+        else {res.send(ERRORS[8]); return;} }
+    else img_filename=req.file.filename;
     
     if(req.body.name.trim()=='')
-        {res.send({msg:"Tên vị trí lưu trữ không được trống.", err:22}); return;}
+        {res.send(ERRORS[21]); return;}
     if(!req.body.modifiedBy)
-        {res.send({msg:"Người cập nhật không thích hợp.", err:23}); return;}
+        {res.send(ERRORS[10]); return;}
     else {
-        const isComplete = await warehouseService.addStorageLocation(req.body, img_path);
-        isComplete? res.send({msg:"Thêm vị trí lưu trữ thành công", err:0})
-        : res.send({msg:"Thêm vị trí lưu trữ thất bại", err:2})
+        const isComplete = await warehouseService.addStorageLocation(req.body, img_filename);
+        isComplete? res.send({msg:MSG[8], err:0})
+        : res.send(ERRORS[22])
     }
 }
 
@@ -32,9 +34,9 @@ const updateStorageLocation = async (req, res) => {
     //     res.send({msg:"File không hợp lệ", err:21})
     // else 
     {
-        const isComplete = await warehouseService.updateStorageLocation(req.body, req.file?.path);
-        isComplete? res.send({msg:"Cập nhật vị trí lưu trữ thành công", err:0})
-        : res.send({msg:"Cập nhật vị trí lưu trữ thất bại", err:3})
+        const isComplete = await warehouseService.updateStorageLocation(req.body, req.file?.filename);
+        isComplete? res.send({msg:MSG[9], err:0})
+        : res.send(ERRORS[23])
     }
 }
 
@@ -45,7 +47,7 @@ const loadStorageLocations = async (req, res) => {
 
 const loadStorageLocationImage = async (req, res) => {
 const path = await warehouseService.getStorageLocationImagePath(req.params.id);
-res.sendFile(path?path:'C:\\IT\\Project\\WMS\\DB\\Img\\404-error.png');
+res.sendFile(path? FILE_STORAGE_PATH+'\\img\\storage_location\\'+path : FILE_STORAGE_PATH+'\\img\\404-error.png');
 }
 
 const loadImports = async (req, res) => {

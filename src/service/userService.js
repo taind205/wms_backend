@@ -1,6 +1,6 @@
 import db from "../db/models"
 import { Op } from "sequelize";
-
+import { ERRORS, MSG } from "../msg";
 
 const getAllUser = async () => {
     const users = await db.User.findAll();
@@ -23,19 +23,19 @@ const handleLogin = async (info) => {
             where:accountID_filt,
             include: [ user]});
             if(!acc)
-                return {msg:"Sai thông tin đăng nhập", err:101};
+                return ERRORS[0];
             if (acc.StatusId==2)
-                return {msg:"Tài khoản đã bị khóa", err:102};
+                return ERRORS[1];
             
             if (acc.RoleId==2)
                 {
                 const wh = await db.WarehouseKeeper.findOne({attributes:["WarehouseId"]
                 , where:{UserId:acc.User.dataValues.id, isActive:1}});
                 if(wh)
-                return {RoleId:acc.RoleId, fullName:acc.User.dataValues.fullname, UserId:acc.User.dataValues.id, WarehouseId:wh.WarehouseId, err:0, msg:'Đăng nhập thành công.'}
-                else return {msg:"Không tìm thấy kho thuộc quyền quản lý của tài khoản.", err:103};
+                return {RoleId:acc.RoleId, fullName:acc.User.dataValues.fullname, UserId:acc.User.dataValues.id, WarehouseId:wh.WarehouseId, err:0, msg:MSG[0]}
+                else return ERRORS[2];
             }
-            else return {RoleId:acc.RoleId, fullName:acc.User.dataValues.fullname, UserId:acc.User.dataValues.id, err:0, msg:'Đăng nhập thành công.'}
+            else return {RoleId:acc.RoleId, fullName:acc.User.dataValues.fullname, UserId:acc.User.dataValues.id, err:0, msg:MSG[0]}
             
         // } else {
         //     acc = await db.Account.findAll({order: [['createdAt', 'DESC']], attributes:["id","createdAt",],
@@ -48,7 +48,7 @@ const handleLogin = async (info) => {
     catch(e)
     {
         console.error(e);
-        return {message:"error occured"};
+        return {message:MSG[1]};
     }
     console.log('return',acc);
     return acc;
@@ -84,39 +84,61 @@ const loadListAccount = async (n, accountID, fullName, status, role) => {
     catch(e)
     {
         console.error(e);
-        return {message:"error occured"};
+        return {message:MSG[1]};
     }
     return acc;
 }
 
 const createAccount = async (account_info) => {
+    if(!account_info.id)
+        return ERRORS[3].msg;
+
     let new_user = {}
     try{
+        new_user = await db.Account.findOne({where:{id:account_info.id}, attributes:["id"]});
+        if(new_user)
+            return ERRORS[4].msg;
+        
+        new_user = await db.User.findOne({where:{ [Op.or]: [{email:{[Op.like]: account_info.email}},
+            {citizenID:{[Op.like]: account_info.citizenID}}, {phoneNumber:{[Op.like]: account_info.phoneNumber}} 
+        ]}, attributes:["email","citizenID","phoneNumber"]});
+        if(new_user)
+        {
+            if (account_info.email && new_user.email==account_info.email)
+                {return ERRORS[5]}
+            // if (new_user.citizenID==account_info.citizenID)
+            //     {return "Số CCCD đã được sử dụng."}
+            // if (new_user.phoneNumber==account_info.phoneNumber)
+            //     {return "Số điện thoại đã được sử dụng."}
+            
+                //return "Email, CCCD hoặc SĐT bị trùng lặp.";
+        }
+        
         new_user = await db.User.create({ fullName: account_info.fullName, gender:account_info.gender, email:account_info.email });
     }
     catch(e)
     {
         console.error(e);
-        return false;
+        return MSG[2]+ e;
     }
 
     if(!new_user.id)
         {
             console.error("New created User not has proper id");
-            return false;
+            return  MSG[2] + "New created User not has proper id";
         }
     
     try{
-    const new_account = await db.Account.create({id:account_info.accountID, RoleId:account_info.role, UserId:new_user.id,
+    const new_account = await db.Account.create({id:account_info.id, RoleId:account_info.role, UserId:new_user.id,
             StatusId:1, password:account_info.password});
     }
     catch(e)
     {
         console.error(e);
-        return false;
+        return MSG[2]+ e;
     }
 
-    return true;
+    return 0;
 }
 
 const updateAccount = async (update_info) => {
@@ -149,7 +171,7 @@ const getUserInfo = async (query) => {
                     }); }
     catch(e) {
         console.error(e);
-        return {message:"error occured"}; }
+        return {message:MSG[1]}; }
     return info;
 }
 

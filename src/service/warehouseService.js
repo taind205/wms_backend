@@ -37,14 +37,18 @@ const loadListWarehouse = async (query) => {
     catch(e)
     {
         console.error(e);
-        return {message:"error occured"};
+        return {message:MSG[1]};
     }
     return list;
 }
 
 const addWarehouse = async (info,img_path) => {
     info.image = img_path
+    info.id = null;
     console.log("add warehouse:", info);
+    
+    
+    //db.Warehouse.removeAttribute('id');
 
     try{
         const new_record = await db.Warehouse.create(info);
@@ -138,7 +142,7 @@ const loadAvailableWarehouseKeepers = async (query) => {
                 }
     catch(e) {
         console.error(e);
-        return {message:"error occured"}; }
+        return {message:MSG[1]}; }
     return result;
 }
 
@@ -152,7 +156,7 @@ const loadWarehouseKeepers = async (query) => {
                     }); }
     catch(e) {
         console.error(e);
-        return {message:"error occured"}; }
+        return {message:MSG[1]}; }
     return list;
 }
 
@@ -183,7 +187,7 @@ const loadStorageLocations = async (query) => {
     catch(e)
     {
         console.error(e);
-        return {message:"error occured"};
+        return {message:MSG[1]};
     }
     return list;
 }
@@ -331,7 +335,7 @@ const loadStorageLocationsbyProductId = async (query) => {
     catch(e)
     {
         console.error(e);
-        return {message:"error occured"};
+        return {message:MSG[1]};
     }
     return list;
 }
@@ -353,7 +357,7 @@ const loadStorageLocationProducts = async (query) => {
     catch(e)
     {
         console.error(e);
-        return {message:"error occured"};
+        return {message:MSG[1]};
     }
     return list;
 }

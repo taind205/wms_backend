@@ -5,18 +5,21 @@ import warehouseKeeperController from "../controller/warehouseKeeperController"
 import multer from "multer";
 import { admin_Auth, warehouseKeeper_Auth, business_Auth, get_Role } from "../middleware/auth";
 //const upload = multer({ dest: 'C:\\IT\\Project\\WMS\\DB\\Img\\Warehouse\\' })
+
+export const FILE_STORAGE_PATH = __filename.replace("src\\routes\\route.js","file_storage");
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       //cb(null, 'C:\\IT\\Project\\WMS\\DB\\Img\\Warehouse\\')
       if (req.path.search('product')>-1)
-        cb(null, 'C:\\IT\\DB\\WMS\\Image\\Product\\')
+        cb(null, FILE_STORAGE_PATH + '\\img\\product\\')
       else if (req.path.search('storage_location')>-1)
-        cb(null, 'C:\\IT\\DB\\WMS\\Image\\StorageLocation\\')
+        cb(null, FILE_STORAGE_PATH + '\\img\\storage_location\\')
       else if(req.path.search('warehouse')>-1)
-        cb(null, 'C:\\IT\\DB\\WMS\\Image\\Warehouse\\')
+        cb(null, FILE_STORAGE_PATH + '\\img\\warehouse\\')
       else if (req.path.search('store')>-1)
-        cb(null, 'C:\\IT\\DB\\WMS\\Image\\Store\\')
-      else cb(null, 'C:\\IT\\DB\\WMS\\Image\\')
+        cb(null, FILE_STORAGE_PATH + '\\img\\store\\')
+      else cb(null, FILE_STORAGE_PATH + '\\img\\')
     },
     filename: function (req, file, cb) {
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
@@ -52,9 +55,9 @@ const router = express.Router();
  */
 
 const initWebRoutes = (app) => {
-    router.get("/", (req,res)=>{
-        return res.status(200).send("Hello world");
-    })
+
+    router.get("/", (req,res)=>{ return res.status(200).send("Hello world"); })
+    router.get("/test", (req,res)=>{ console.log(FILE_STORAGE_PATH); return res.status(200).send(FILE_STORAGE_PATH); })
 
     router.get("/userinfo/get", adminController.getUserInfo);
     router.post("/userinfo/update", adminController.updateUserInfo);

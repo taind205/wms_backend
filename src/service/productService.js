@@ -1,6 +1,6 @@
 import db from "../db/models"
 import { Op, fn, col } from "sequelize";
-
+import { MSG } from "../msg";
 
 // const getAllUser = async () => {
 //     const users = await db.User.findAll();
@@ -15,7 +15,7 @@ const loadProductTags = async (query) => {
                     }); }
     catch(e) {
         console.error(e);
-        return {message:"error occured"}; }
+        return {message:MSG[1]}; }
     return list;
 }
 
@@ -27,7 +27,7 @@ const loadProductPrices = async (query) =>{
             }
     catch(e) {
         console.error(e);
-        return {message:"error occured"}; }
+        return {message:MSG[1]}; }
     return list;
     
 }
@@ -70,7 +70,7 @@ const loadListProduct = async (query) => {
     catch(e)
     {
         console.error(e);
-        return {message:"error occured"};
+        return {message:MSG[1]};
     }
     return list;
 }
@@ -133,9 +133,9 @@ const updateProduct = async (update_info,img_path) => {
     return true;
 }
 
-const getProductImagePath = async (id) => {
+const getProductImageFileName = async (id) => {
     
-    console.log("get product ImagePath:", id);
+    console.log("get product image file name:", id);
     
     try{
         const record = await db.Product.findOne({attributes:["image"],
@@ -162,7 +162,7 @@ const loadCategory = async () => {
         list = await db.Category.findAll({attributes:['id','name','description'], limit:99}); }
     catch(e) {
         console.error(e);
-        return {message:"error occured"}; }
+        return {message:MSG[1]}; }
     return list;
 }
 
@@ -181,7 +181,7 @@ const loadTags = async (query) => {
                     limit:loadsize, offset:loadsize*load_num}); }
     catch(e) {
         console.error(e);
-        return {message:"error occured"}; }
+        return {message:MSG[1]}; }
     return list;
 }
 
@@ -256,7 +256,7 @@ const loadImports = async (query) => {
                     limit:loadsize, offset:loadsize*load_num}); }
     catch(e) {
         console.error(e);
-        return {message:"error occured"}; }
+        return {message:MSG[1]}; }
     return list;
 }
 
@@ -269,7 +269,7 @@ const loadImportDetails = async (query) => {
                     }); }
     catch(e) {
         console.error(e);
-        return {message:"error occured"}; }
+        return {message:MSG[1]}; }
     return list;
 }
 
@@ -290,7 +290,7 @@ const loadProductBatchesbyProductId = async (query) => {
                     limit:loadsize, offset:loadsize*load_num}); }
     catch(e) {
         console.error(e);
-        return {message:"error occured"}; }
+        return {message:MSG[1]}; }
     return list;
 }
 
@@ -340,7 +340,7 @@ const loadExports = async (query) => {
                     limit:loadsize, offset:loadsize*load_num}); }
     catch(e) {
         console.error(e);
-        return {message:"error occured"}; }
+        return {message:MSG[1]}; }
     return list;
 }
 
@@ -360,7 +360,7 @@ const loadExportDetails = async (query) => {
                     }); }
     catch(e) {
         console.error(e);
-        return {message:"error occured"}; }
+        return {message:MSG[1]}; }
     return list;
 }
 
@@ -404,7 +404,7 @@ const getExpiryDateReport = async (query) => {
         
     catch(e) {
         console.error(e);
-        return {message:"error occured"}; }
+        return {message:MSG[1]}; }
     return pbs_list;
 }
 
@@ -454,11 +454,11 @@ const getInventoryReport = async (query) => {
     }
                 catch(e) {
         console.error(e);
-        return {message:"error occured"}; }
+        return {message:MSG[1]}; }
     return pbs;
 }
 
-module.exports = { addProduct, loadListProduct, getProductImagePath, updateProduct, 
+module.exports = { addProduct, loadListProduct, getProductImageFileName, updateProduct, 
                 loadCategory, loadTags, addTag, updateTag, loadProductTags,
                 createImport, loadImports, loadImportDetails, 
                 loadProductBatchesbyProductId, createExport, 

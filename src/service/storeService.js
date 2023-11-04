@@ -22,7 +22,7 @@ const loadStores = async (query) => {
     catch(e)
     {
         console.error(e);
-        return {message:"error occured"};
+        return {message:MSG[1]};
     }
     return list;
 }

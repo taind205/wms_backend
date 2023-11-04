@@ -1,6 +1,8 @@
 import userService from "../service/userService";
 import warehouseService from "../service/warehouseService";
 import storeService from "../service/storeService";
+import { ERRORS, MSG } from "../msg";
+import { FILE_STORAGE_PATH } from "../routes/route";
 var jwt = require('jsonwebtoken');
 const secret_key='123'
 
@@ -35,17 +37,27 @@ const loadListAccount = async (req, res) => {
 }
 
 const createAccount = async (req, res) => {
-    const isCreateComplete = await userService.createAccount(req.body);
-    isCreateComplete ?
-    res.send({msg:"Tạo tài khoản thành công"}) : 
-    res.send({msg:"Tạo tài khoản thất bại"})
+    if(!req.body.id)
+    {
+        res.send({msg:ERRORS[6].msg});
+        return;
+    }
+    if(!req.body.fullName)
+    {
+        res.send({msg:ERRORS[7].msg});
+        return;
+    }
+    const err = await userService.createAccount(req.body);
+    err ?
+    res.send({msg:err}) : 
+    res.send({msg:MSG[3]})
 }
 
 const updateAccount = async (req, res) => {
     const isComplete = await userService.updateAccount(req.body);
     isComplete ?
-    res.status(200).send({msg:"Cập nhật thành công", err:0}) : 
-    res.status(200).send({msg:"Cập nhật thất bại", err:1})
+    res.status(200).send({msg:MSG[4], err:0}) : 
+    res.status(200).send({msg:MSG[5], err:1})
 }
 
 const addStore = async (req, res) => {
@@ -53,20 +65,20 @@ const addStore = async (req, res) => {
     // req.body will hold the text fields, if there were any 
     // req.file.filename=req.body.name;
     console.log(req.file, req.body)
-    let img_path='';
+    let img_filename='';
     if(!req.file) {
-        if(req.body.useDefaultImage) img_path='C:\\IT\\DB\\WMS\\Image\\Store\\default.png';
-        else {res.send({msg:"File không hợp lệ.", err:21}); return;} }
-    else img_path=req.file.path;
+        if(req.body.useDefaultImage) img_filename='default.png';
+        else {res.send(ERRORS[8]); return;} }
+    else img_filename=req.file.filename;
     
     if(req.body.name.trim()=='')
-        {res.send({msg:"Tên cửa hàng không được trống.", err:22}); return;}
+        {res.send(ERRORS[9]); return;}
     if(!req.body.modifiedBy)
-        {res.send({msg:"Người cập nhật không thích hợp.", err:23}); return;}
+        {res.send(ERRORS[10]); return;}
     else {
-        const isComplete = await storeService.addStore(req.body, img_path);
-        isComplete? res.send({msg:"Thêm cửa hàng thành công", err:0})
-        : res.send({msg:"Thêm cửa hàng thất bại", err:2})
+        const isComplete = await storeService.addStore(req.body, img_filename);
+        isComplete? res.send({msg:MSG[6], err:0})
+        : res.send(ERRORS[11])
     }
 }
 
@@ -79,9 +91,9 @@ const updateStore = async (req, res) => {
     //     res.send({msg:"File không hợp lệ", err:21})
     // else 
     {
-        const isComplete = await storeService.updateStore(req.body, req.file?.path);
-        isComplete? res.send({msg:"Cập nhật cửa hàng thành công", err:0})
-        : res.send({msg:"Cập nhật cửa hàng thất bại", err:3})
+        const isComplete = await storeService.updateStore(req.body, req.file?.filename);
+        isComplete? res.send({msg:MSG[4], err:0})
+        : res.send(ERRORS[12])
     }
 }
 
@@ -91,8 +103,8 @@ const loadStores = async (req, res) => {
 }
 
 const loadStoreImage = async (req, res) => {
-const path = await storeService.getStoreImagePath(req.params.id);
-res.sendFile(path?path:'C:\\IT\\Project\\WMS\\DB\\Img\\404-error.png');
+const filename = await storeService.getStoreImagePath(req.params.id);
+res.sendFile(filename? FILE_STORAGE_PATH+'\\img\\store\\'+filename : FILE_STORAGE_PATH+'\\img\\404-error.png');
 }
 
 const addWarehouse = async (req, res) => {
@@ -101,21 +113,21 @@ const addWarehouse = async (req, res) => {
     // req.file.filename=req.body.name;
 
     console.log(req.file, req.body)
-    let img_path='';
+    let img_filename='';
     if(!req.file) {
-        if(req.body.useDefaultImage) img_path='C:\\IT\\DB\\WMS\\Image\\Warehouse\\default.png';
-        else {res.send({msg:"File không hợp lệ.", err:21}); return;} }
-    else img_path=req.file.path;
+        if(req.body.useDefaultImage) img_filename='default.png';
+        else {res.send(ERRORS[8]); return;} }
+    else img_filename=req.file.filename;
     
     if(req.body.name.trim()=='')
-        {res.send({msg:"Tên kho không được trống.", err:22}); return;}
+        {res.send(ERRORS[13]); return;}
     if(!req.body.modifiedBy)
-        {res.send({msg:"Người cập nhật không thích hợp.", err:23}); return;}
+        {res.send(ERRORS[10]); return;}
 
     else {
-        const isComplete = await warehouseService.addWarehouse(req.body, img_path);
-        isComplete? res.send({msg:"Thêm kho thành công", err:0})
-        : res.send({msg:"Thêm kho thất bại", err:2})
+        const isComplete = await warehouseService.addWarehouse(req.body, img_filename);
+        isComplete? res.send({msg:MSG[7], err:0})
+        : res.send(ERRORS[14])
     }
 }
 
@@ -128,9 +140,9 @@ const updateWarehouse = async (req, res) => {
     //     res.send({msg:"File không hợp lệ", err:21})
     // else 
     {
-        const isComplete = await warehouseService.updateWarehouse(req.body, req.file?.path);
-        isComplete? res.send({msg:"Cập nhật kho thành công", err:0})
-        : res.send({msg:"Cập nhật kho thất bại", err:3})
+        const isComplete = await warehouseService.updateWarehouse(req.body, req.file?.filename);
+        isComplete? res.send({msg:MSG[4], err:0})
+        : res.send(ERRORS[15])
     }
 }
 
@@ -140,8 +152,8 @@ const loadListWarehouse = async (req, res) => {
 }
 
 const loadWarehouseImage = async (req, res) => {
-const path = await warehouseService.getWarehouseImagePath(req.params.id);
-res.sendFile(path?path:'C:\\IT\\Project\\WMS\\DB\\Img\\404-error.png');
+    const filename = await warehouseService.getWarehouseImagePath(req.params.id);
+    res.sendFile(filename? FILE_STORAGE_PATH+'\\img\\warehouse\\'+filename : FILE_STORAGE_PATH+'\\img\\404-error.png');
 }
 
 const loadAvailableWarehouseKeepers = async (req, res) => {
@@ -165,12 +177,12 @@ const getUserInfo = async (req, res) => {
 const updateUserInfo = async (req, res) => {
     
     if(req.body.fullName.trim()=='')
-        {res.send({msg:"Họ và tên không được trống.", err:22}); return;}
+        {res.send(ERRORS[16]); return;}
 
     {
         const isComplete = await userService.updateUserInfo(req.body);
-        isComplete? res.send({msg:"Cập nhật thành công", err:0})
-        : res.send({msg:"Cập nhật thất bại", err:3})
+        isComplete? res.send({msg:MSG[4], err:0})
+        : res.send({msg:MSG[5], err:3})
     }
 }
 

@@ -1,25 +1,27 @@
+import { ERRORS, MSG } from "../msg";
 import productService from "../service/productService"
+import { FILE_STORAGE_PATH } from "../routes/route";
 
 const addProduct = async (req, res) => {
     // req.file is the name of your file in the form above, here 'uploaded_file'
     // req.body will hold the text fields, if there were any 
     // req.file.filename=req.body.name;
     console.log(req.file, req.body)
-    let img_path='';
+    let img_filename='';
     if(!req.file) {
-        if(req.body.useDefaultImage) img_path='C:\\IT\\DB\\WMS\\Image\\Product\\default.png';
-        else {res.send({msg:"File không hợp lệ.", err:21}); return;} }
-    else img_path=req.file.path;
+        if(req.body.useDefaultImage) img_filename='default.png';
+        else {res.send(ERRORS[8]); return;} }
+    else img_filename=req.file.filename;
     
     if(req.body.name.trim()=='')
-        {res.send({msg:"Tên hàng hóa không được trống.", err:22}); return;}
+        {res.send(ERRORS[24]); return;}
     if(req.body.StatusId==0)
-        {res.send({msg:"Trạng thái hàng hóa không được trống.", err:23}); return;}
+        {res.send(ERRORS[25]); return;}
 
     else {
-        const isComplete = await productService.addProduct(req.body, img_path);
-        isComplete? res.send({msg:"Thêm hàng hóa thành công", err:0})
-        : res.send({msg:"Thêm hàng hóa thất bại", err:2})
+        const isComplete = await productService.addProduct(req.body, img_filename);
+        isComplete? res.send({msg:MSG[10], err:0})
+        : res.send(ERRORS[26]);
     }
 }
 
@@ -34,14 +36,14 @@ const updateProduct = async (req, res) => {
 
 
     if(!req.body.name || req.body.name.trim()=='')
-        {res.send({msg:"Tên hàng hóa không được trống.", err:22}); return;}
+        {res.send(ERRORS[24]); return;}
     if(!req.body.StatusId)
-        {res.send({msg:"Trạng thái hóa không được trống.", err:23}); return;}
+        {res.send(ERRORS[25]); return;}
     Object.keys(req.body).forEach(key => { if (!req.body[key]) { delete req.body[key]; } });
     {
-        const isComplete = await productService.updateProduct(req.body, req.file?.path);
-        isComplete? res.send({msg:"Cập nhật hàng hóa thành công", err:0})
-        : res.send({msg:"Cập nhật hàng hóa thất bại", err:3})
+        const isComplete = await productService.updateProduct(req.body, req.file?.filename);
+        isComplete? res.send({msg:MSG[11], err:0})
+        : res.send(ERRORS[27])
     }
 }
 
@@ -51,8 +53,8 @@ const loadListProduct = async (req, res) => {
 }
 
 const loadProductImage = async (req, res) => {
-    const path = await productService.getProductImagePath(req.params.id);
-    res.sendFile(path||'C:\\IT\\DB\\WMS\\Image\\404-error.png');
+    const filename = await productService.getProductImageFileName(req.params.id);
+    res.sendFile(filename? FILE_STORAGE_PATH+'\\img\\product\\'+filename : FILE_STORAGE_PATH+'\\img\\404-error.png');
     }
 
 const addTag = async (req, res) => {
@@ -106,9 +108,9 @@ const loadCategory = async (req, res) => {
 
 const createImport = async (req, res) => {
     if(!req.body.WarehouseId)
-        {res.send({msg:"Cần chọn một kho.", err:22}); return;}
+        {res.send(ERRORS[17]); return;}
     if(!req.body.list || !req.body.list.length)
-        {res.send({msg:"Cần ít nhất một hàng hóa trong phiếu nhập.", err:23}); return;}
+        {res.send(ERRORS[18]); return;}
     const isComplete = await productService.createImport(req.body, res.locals.user);
     isComplete? res.send({msg:"Tạo phiếu nhập thành công", err:0})
     : res.send({msg:"Tạo phiếu nhập thất bại", err:2})
@@ -131,9 +133,9 @@ const createExport = async (req, res) => {
     // if(!req.body.WarehouseId)
     //     {res.send({msg:"Cần chọn một kho.", err:22}); return;}
     if(!req.body.StoreId)
-        {res.send({msg:"Cần chọn một cửa hàng.", err:22}); return;}
-    if(!req.body.list || !req.body.list.length)
-        {res.send({msg:"Cần ít nhất một hàng hóa trong phiếu xuất.", err:23}); return;}
+        {res.send(ERRORS[19]); return;}
+    if(!req.body.list || !req.body.list[0] || !req.body.list[0][0])
+        {res.send(ERRORS[20]); return;}
 
     const isComplete = await productService.createExport(req.body, res.locals.user);
     isComplete? res.send({msg:"Tạo phiếu xuất thành công", err:0})
