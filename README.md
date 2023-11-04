@@ -1,6 +1,6 @@
 # wms_backend
 
-Project được xây dựng theo Express Framework
-
-Project sử dụng Sequelize để kết nối database
-  - Dùng lệnh "npx sequelize-cli db:migrate" để khởi tạo các table cần thiết cho project ở database.
+Warehouse management system back-end project.
+  - Made with Node.js v18.13.0
+  - Use Express Framework for routing, middleware...
+  - Use Sequelize for creating data models, connecting database...
