@@ -4,22 +4,22 @@ import businessController from "../controller/businessController"
 import warehouseKeeperController from "../controller/warehouseKeeperController"
 import multer from "multer";
 import { admin_Auth, warehouseKeeper_Auth, business_Auth, get_Role } from "../middleware/auth";
-//const upload = multer({ dest: 'C:\\IT\\Project\\WMS\\DB\\Img\\Warehouse\\' })
+//const upload = multer({ dest: 'C:/IT/Project/WMS/DB/Img/Warehouse/' })
 
-export const FILE_STORAGE_PATH = __filename.replace("src\\routes\\route.js","file_storage");
+export const FILE_STORAGE_PATH = __filename.replace("src/routes/route.js","file_storage");
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      //cb(null, 'C:\\IT\\Project\\WMS\\DB\\Img\\Warehouse\\')
+      //cb(null, 'C:/IT/Project/WMS/DB/Img/Warehouse/')
       if (req.path.search('product')>-1)
-        cb(null, FILE_STORAGE_PATH + '\\img\\product\\')
+        cb(null, FILE_STORAGE_PATH + '/img/product/')
       else if (req.path.search('storage_location')>-1)
-        cb(null, FILE_STORAGE_PATH + '\\img\\storage_location\\')
+        cb(null, FILE_STORAGE_PATH + '/img/storage_location/')
       else if(req.path.search('warehouse')>-1)
-        cb(null, FILE_STORAGE_PATH + '\\img\\warehouse\\')
+        cb(null, FILE_STORAGE_PATH + '/img/warehouse/')
       else if (req.path.search('store')>-1)
-        cb(null, FILE_STORAGE_PATH + '\\img\\store\\')
-      else cb(null, FILE_STORAGE_PATH + '\\img\\')
+        cb(null, FILE_STORAGE_PATH + '/img/store/')
+      else cb(null, FILE_STORAGE_PATH + '/img/')
     },
     filename: function (req, file, cb) {
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)

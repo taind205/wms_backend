@@ -1,5 +1,7 @@
 .env
 node_modules
 node_modules/*
-file_storage
-file_storage/*
+file_storage/img/product/*
+file_storage/img/storage_location/*
+file_storage/img/store/*
+file_storage/img/warehouse/*
