@@ -6,20 +6,22 @@ import multer from "multer";
 import { admin_Auth, warehouseKeeper_Auth, business_Auth, get_Role } from "../middleware/auth";
 //const upload = multer({ dest: 'C:/IT/Project/WMS/DB/Img/Warehouse/' })
 
-export const FILE_STORAGE_PATH = __filename.replace("src/routes/route.js","file_storage");
+const sl=process.env.SLASH_INPATH;
+
+export const FILE_STORAGE_PATH = __filename.replace("src"+sl+"routes"+sl+"route.js","file_storage"+sl);
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       //cb(null, 'C:/IT/Project/WMS/DB/Img/Warehouse/')
       if (req.path.search('product')>-1)
-        cb(null, FILE_STORAGE_PATH + '/img/product/')
+        cb(null, FILE_STORAGE_PATH + 'img'+sl+'product'+sl)
       else if (req.path.search('storage_location')>-1)
-        cb(null, FILE_STORAGE_PATH + '/img/storage_location/')
+        cb(null, FILE_STORAGE_PATH + 'img'+sl+'storage_location'+sl)
       else if(req.path.search('warehouse')>-1)
-        cb(null, FILE_STORAGE_PATH + '/img/warehouse/')
+        cb(null, FILE_STORAGE_PATH + 'img'+sl+'warehouse'+sl)
       else if (req.path.search('store')>-1)
-        cb(null, FILE_STORAGE_PATH + '/img/store/')
-      else cb(null, FILE_STORAGE_PATH + '/img/')
+        cb(null, FILE_STORAGE_PATH + 'img'+sl+'store'+sl)
+      else cb(null, FILE_STORAGE_PATH + 'img'+sl)
     },
     filename: function (req, file, cb) {
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)

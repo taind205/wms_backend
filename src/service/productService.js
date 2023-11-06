@@ -1,6 +1,6 @@
 import db from "../db/models"
 import { Op, fn, col } from "sequelize";
-import { MSG } from "../msg";
+import { ERRORS, MSG } from "../msg";
 
 // const getAllUser = async () => {
 //     const users = await db.User.findAll();
@@ -76,25 +76,26 @@ const loadListProduct = async (query) => {
 }
 
 const addProduct = async (info,img_path) => {
-    info.image = img_path
+    info.image = img_path;
     console.log("add product:", info);
 
     try{
         const new_record = await db.Product.create(info);
         const new_record2 = await db.ProductPrice.create({ProductId:new_record.id, price:info.price, UserId:info.UserId});
         for(const tag of info.tags.split(',')){
+            if(tag){
             console.log('add', tag);
-            const new_record2 = await db.ProductTag.create({ProductId:new_record.id, TagId:tag});
+            const new_record2 = await db.ProductTag.create({ProductId:new_record.id, TagId:tag});}
         }
         console.log('finish add product',new_record,new_record2);
     }
     catch(e)
     {
         console.error(e);
-        return false;
+        return ERRORS[26];
     }
 
-    return true;
+    return false;
 }
 
 const updateProduct = async (update_info,img_path) => {
@@ -116,21 +117,23 @@ const updateProduct = async (update_info,img_path) => {
         // const new_record2 = await db.ProductPrice.create({ProductId:new_record.id, price:info.price, UserId:info.UserId});
         if(update_info.deprecated_tags)
             for(const tag of update_info.deprecated_tags.split(',')){
+                if(tag){
                 console.log('delete', tag);
-                await db.ProductTag.destroy({where:{ProductId:update_info.id, TagId:tag}}); }
+                await db.ProductTag.destroy({where:{ProductId:update_info.id, TagId:tag}}); }}
         if(update_info.new_tags)
             for(const tag of update_info.new_tags.split(',')){
+                if(tag){
                 console.log('add', tag);
-                await db.ProductTag.create({ProductId:update_info.id, TagId:tag});}
+                await db.ProductTag.create({ProductId:update_info.id, TagId:tag});}}
         console.log('finish update product', updated_record);
     }
     catch(e)
     {
         console.error(e);
-        return false;
+        return ERRORS[27];
     }
 
-    return true;
+    return false;
 }
 
 const getProductImageFileName = async (id) => {

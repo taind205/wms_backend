@@ -6,22 +6,27 @@ const addProduct = async (req, res) => {
     // req.file is the name of your file in the form above, here 'uploaded_file'
     // req.body will hold the text fields, if there were any 
     // req.file.filename=req.body.name;
-    console.log(req.file, req.body)
+    const data = req.body;
+    console.log(req.file, data)
     let img_filename='';
     if(!req.file) {
-        if(req.body.useDefaultImage) img_filename='default.png';
+        if(data.useDefaultImage) img_filename='default.png';
         else {res.send(ERRORS[8]); return;} }
     else img_filename=req.file.filename;
     
-    if(req.body.name.trim()=='')
+    if(data.name.trim()=='')
         {res.send(ERRORS[24]); return;}
-    if(req.body.StatusId==0)
+    if(data.StatusId==0)
         {res.send(ERRORS[25]); return;}
+    if(!data.price || data.price <=0)
+        {res.send(ERRORS[28]); return;}
+    if(!data.shelfLife || data.shelfLife <=0)
+        {res.send(ERRORS[29]); return;}
 
     else {
-        const isComplete = await productService.addProduct(req.body, img_filename);
-        isComplete? res.send({msg:MSG[10], err:0})
-        : res.send(ERRORS[26]);
+        const err = await productService.addProduct(data, img_filename);
+        err? res.send(err)
+        :  res.send({msg:MSG[10], err:0});
     }
 }
 
@@ -29,21 +34,27 @@ const updateProduct = async (req, res) => {
     // req.file is the name of your file in the form above, here 'uploaded_file'
     // req.body will hold the text fields, if there were any 
     // req.file.filename=req.body.name;
-    console.log(req.file, req.body)
+    const data = req.body;
+    console.log(req.file, data)
     // if(!req.file)
     //     res.send({msg:"File không hợp lệ", err:21})
     // else 
 
 
-    if(!req.body.name || req.body.name.trim()=='')
+    if(!data.name || data.name.trim()=='')
         {res.send(ERRORS[24]); return;}
-    if(!req.body.StatusId)
+    if(!data.StatusId)
         {res.send(ERRORS[25]); return;}
-    Object.keys(req.body).forEach(key => { if (!req.body[key]) { delete req.body[key]; } });
+    if(data.price && data.price <=0)
+        {res.send(ERRORS[28]); return;}
+    if(data.shelfLife && data.shelfLife <=0)
+        {res.send(ERRORS[29]); return;}
+
+    Object.keys(data).forEach(key => { if (!data[key]) { delete data[key]; } });
     {
-        const isComplete = await productService.updateProduct(req.body, req.file?.filename);
-        isComplete? res.send({msg:MSG[11], err:0})
-        : res.send(ERRORS[27])
+        const err = await productService.updateProduct(data, req.file?.filename);
+        err? res.send(err)
+        : res.send({msg:MSG[11], err:0})
     }
 }
 

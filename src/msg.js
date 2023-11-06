@@ -26,7 +26,9 @@ export const ERRORS = [
     {msg:"Tên hàng hóa không được trống.", err:125},
     {msg:"Trạng thái hàng hóa không được trống.", err:126},
     {msg:"Thêm hàng hóa thất bại", err:127},
-    {msg:"Cập nhật hàng hóa thất bại", err:128}
+    {msg:"Cập nhật hàng hóa thất bại", err:128},
+    {msg:"Giá hàng hóa không được trống và phải lớn hơn 0.", err:129},
+    {msg:"Thời hạn sử dụng không được trống và phải lớn hơn 0.", err:130},
 
 
 ];

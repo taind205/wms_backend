@@ -53,9 +53,10 @@ const addWarehouse = async (info,img_path) => {
     try{
         const new_record = await db.Warehouse.create(info);
         for(const keeper of info.keepers.split(',')){
+            if(keeper){
             console.log('add', keeper);
             await db.WarehouseKeeper.update({isActive:0},{where:{UserId:keeper, isActive:1},limit:1});
-            const new_record2 = await db.WarehouseKeeper.create({WarehouseId:new_record.id, UserId:keeper, isActive:1});
+            const new_record2 = await db.WarehouseKeeper.create({WarehouseId:new_record.id, UserId:keeper, isActive:1});}
         }
         console.log('finish add warehouse',new_record);
     }
@@ -77,13 +78,15 @@ const updateWarehouse = async (update_info,img_path) => {
         // delete file from image path
         const updated_record = await db.Warehouse.update(update_info, { where: { id:update_info.id }});
         for(const keeper of update_info.deprecated_keepers.split(',')){
+            if(keeper){
             console.log('delete', keeper);
-            await db.WarehouseKeeper.update({isActive:0},{where:{WarehouseId:update_info.id, UserId:keeper, isActive:1},limit:1});
+            await db.WarehouseKeeper.update({isActive:0},{where:{WarehouseId:update_info.id, UserId:keeper, isActive:1},limit:1});}
         }
         for(const keeper of update_info.new_keepers.split(',')){
+            if(keeper){
             console.log('add', keeper);
             await db.WarehouseKeeper.update({isActive:0},{where:{UserId:keeper, isActive:1},limit:1});
-            await db.WarehouseKeeper.create({WarehouseId:update_info.id, UserId:keeper,isActive:1});
+            await db.WarehouseKeeper.create({WarehouseId:update_info.id, UserId:keeper,isActive:1});}
         }
         console.log('finish update warehouse', updated_record);
     }

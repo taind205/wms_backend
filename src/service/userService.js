@@ -105,7 +105,7 @@ const createAccount = async (account_info) => {
         if(new_user)
         {
             if (account_info.email && new_user.email==account_info.email)
-                {return ERRORS[5]}
+                {return ERRORS[5].msg}
             // if (new_user.citizenID==account_info.citizenID)
             //     {return "Số CCCD đã được sử dụng."}
             // if (new_user.phoneNumber==account_info.phoneNumber)
