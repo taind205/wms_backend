@@ -42,7 +42,7 @@ const handleLoginForBrowser = async (req, res) => {
             token = jwt.sign({ r:info.RoleId, u:info.UserId }, secret_key);
             console.log('jwt created',token);
         }
-    res.cookie('jwt', token, { expires: new Date(Date.now() + 1 * 3600000), httpOnly: true, secure: true // cookie will be removed after 1 hours
+    res.cookie('jwt', token, { expires: new Date(Date.now() + 1 * 3600000), httpOnly: true, secure: true, sameSite: 'none' // cookie will be removed after 1 hours
      });
     res.send(Object.assign(info));
 }
