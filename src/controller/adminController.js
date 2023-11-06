@@ -2,7 +2,7 @@ import userService from "../service/userService";
 import warehouseService from "../service/warehouseService";
 import storeService from "../service/storeService";
 import { ERRORS, MSG } from "../msg";
-import { FILE_STORAGE_PATH } from "../routes/route";
+import { SL, FILE_STORAGE_PATH } from "../routes/route";
 var jwt = require('jsonwebtoken');
 const secret_key='123'
 
@@ -121,7 +121,7 @@ const loadStores = async (req, res) => {
 
 const loadStoreImage = async (req, res) => {
 const filename = await storeService.getStoreImagePath(req.params.id);
-res.sendFile(filename? FILE_STORAGE_PATH+'\\img\\store\\'+filename : FILE_STORAGE_PATH+'\\img\\404-error.png');
+res.sendFile(filename? FILE_STORAGE_PATH+'img'+SL+'store'+SL+filename : FILE_STORAGE_PATH+'img'+SL+'404-error.png');
 }
 
 const addWarehouse = async (req, res) => {
@@ -170,7 +170,7 @@ const loadListWarehouse = async (req, res) => {
 
 const loadWarehouseImage = async (req, res) => {
     const filename = await warehouseService.getWarehouseImagePath(req.params.id);
-    res.sendFile(filename? FILE_STORAGE_PATH+'\\img\\warehouse\\'+filename : FILE_STORAGE_PATH+'\\img\\404-error.png');
+    res.sendFile(filename? FILE_STORAGE_PATH+'img'+SL+'warehouse'+SL+filename : FILE_STORAGE_PATH+'img'+SL+'404-error.png');
 }
 
 const loadAvailableWarehouseKeepers = async (req, res) => {

@@ -1,6 +1,6 @@
 import { ERRORS, MSG } from "../msg";
 import productService from "../service/productService"
-import { FILE_STORAGE_PATH } from "../routes/route";
+import { FILE_STORAGE_PATH, SL } from "../routes/route";
 
 const addProduct = async (req, res) => {
     // req.file is the name of your file in the form above, here 'uploaded_file'
@@ -65,7 +65,7 @@ const loadListProduct = async (req, res) => {
 
 const loadProductImage = async (req, res) => {
     const filename = await productService.getProductImageFileName(req.params.id);
-    res.sendFile(filename? FILE_STORAGE_PATH+'\\img\\product\\'+filename : FILE_STORAGE_PATH+'\\img\\404-error.png');
+    res.sendFile(filename? FILE_STORAGE_PATH+'img'+SL+'product'+SL+filename : FILE_STORAGE_PATH+'img'+SL+'404-error.png');
     }
 
 const addTag = async (req, res) => {

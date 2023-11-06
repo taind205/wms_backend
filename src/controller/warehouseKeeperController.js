@@ -1,6 +1,6 @@
 import productService from "../service/productService";
 import warehouseService from "../service/warehouseService"
-import { FILE_STORAGE_PATH } from "../routes/route";
+import { FILE_STORAGE_PATH, SL } from "../routes/route";
 import { ERRORS, MSG } from "../msg";
 
 const addStorageLocation = async (req, res) => {
@@ -47,7 +47,7 @@ const loadStorageLocations = async (req, res) => {
 
 const loadStorageLocationImage = async (req, res) => {
 const path = await warehouseService.getStorageLocationImagePath(req.params.id);
-res.sendFile(path? FILE_STORAGE_PATH+'\\img\\storage_location\\'+path : FILE_STORAGE_PATH+'\\img\\404-error.png');
+res.sendFile(path? FILE_STORAGE_PATH+'img'+SL+'storage_location'+SL+path : FILE_STORAGE_PATH+'img'+SL+'404-error.png');
 }
 
 const loadImports = async (req, res) => {
