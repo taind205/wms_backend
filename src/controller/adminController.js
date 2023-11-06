@@ -12,7 +12,7 @@ const getAllUser = async (req, res) => {
     res.send(users);
 }
 
-const handleLogin = async (req, res) => {
+const handleLoginForServer = async (req, res) => {
     let info = await userService.handleLogin(req.body);
     console.log(info);
     let token = null;
@@ -24,10 +24,27 @@ const handleLogin = async (req, res) => {
             token = jwt.sign({ r:info.RoleId, u:info.UserId }, secret_key);
             console.log('jwt created',token);
         }
-    res.cookie('jwt', token, { expires: new Date(Date.now() + 1 * 3600000), httpOnly: true,  // cookie will be removed after 1 hours
-     });
-    res.cookie('Role', info.RoleId);
+    // res.cookie('jwt', token, { expires: new Date(Date.now() + 1 * 3600000), httpOnly: true,  // cookie will be removed after 1 hours
+    //  });
+    // res.cookie('Role', info.RoleId);
     res.send(Object.assign(info,{jwt:token}));
+}
+
+const handleLoginForBrowser = async (req, res) => {
+    let info = await userService.handleLogin(req.body);
+    console.log(info);
+    let token = null;
+    if(info.err==0)
+        {
+            if(info.RoleId==2)
+            token = jwt.sign({ r:info.RoleId, u:info.UserId, w:info.WarehouseId }, secret_key);
+            else
+            token = jwt.sign({ r:info.RoleId, u:info.UserId }, secret_key);
+            console.log('jwt created',token);
+        }
+    res.cookie('jwt', token, { expires: new Date(Date.now() + 1 * 3600000), httpOnly: true, secure: true // cookie will be removed after 1 hours
+     });
+    res.send(Object.assign(info));
 }
 
 const loadListAccount = async (req, res) => {
@@ -190,4 +207,4 @@ module.exports = {getAllUser, loadListAccount, createAccount, updateAccount, add
                     loadWarehouseImage, loadListWarehouse, updateWarehouse, 
                     loadWarehouseKeepers, loadAvailableWarehouseKeepers, 
                     addStore, loadStoreImage, loadStores, updateStore, 
-                    handleLogin, getUserInfo, updateUserInfo}
+                    handleLoginForBrowser, handleLoginForServer, getUserInfo, updateUserInfo}

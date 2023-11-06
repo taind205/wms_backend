@@ -61,7 +61,8 @@ const initWebRoutes = (app) => {
 
     router.get("/userinfo/get", adminController.getUserInfo);
     router.post("/userinfo/update", adminController.updateUserInfo);
-    router.post("/login/", adminController.handleLogin);
+    router.post("/login_s", adminController.handleLoginForServer);
+    router.post("/login_b", adminController.handleLoginForBrowser);
     router.get("/role/get", get_Role);
 
     router.get("/admin/account/load/:n", admin_Auth, adminController.loadListAccount);
